@@ -1,0 +1,12 @@
+#!/bin/bash
+#Fonction presence, on rentre le nom du fichier et l'arboresence correspondante  et on regarde si celui-ci existe.
+presence(){
+local acces=$1
+acces+=$2
+if [ -f $acces ]
+then
+
+}
+
+presence "tp3/" "e3"
+
