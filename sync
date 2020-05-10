@@ -1,12 +1,34 @@
 #!/bin/bash
 #Fonction presence, on rentre le nom du fichier et l'arboresence correspondante  et on regarde si celui-ci existe.
+#paramètre : fichier à tester | arbo en cours de test | position arbo actuelle
 presence(){
-local acces=$1
-acces+=$2
-if [ -f $acces ]
+local source=$3 #fichier de référence
+source+=$2
+local testing=$1 #fichier que l'on est en train de tester
+testing+=$2
+if [ -e $testing ]
 then
+	echo "le fichier existe, il faut test la date"
+	test_date $source $testing 
+else
+	cp -p $source $testing
+	echo "copie reussis"
+fi
 
 }
+#Fonction test_date, permet de comparer la date en seconde des deux fichiers
+test_date(){
+local date_source=`stat -c %Y $1`
+local date_testing=`stat -c %Y $2`
 
-presence "tp3/" "e3"
+#si le fichier testé est moins récent que le fichier source, je delete le fichier testé puis copie le fichier source
+if [ $date_source -gt $date_testing ]
+then
+	rm $2
+	cp -p $1 $2
+	echo "Remove puis copie"
+fi
+}
+
+presence "/home/florian/Projet_Directory/dir2/" "test" "/home/florian/Projet_Directory/dir1/"
 
