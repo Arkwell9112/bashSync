@@ -1,2 +1,3 @@
 #!/bin/bash
+#permet l'écriture à la fin du journal
 echo "$1|$2|$3|$4" >> journal

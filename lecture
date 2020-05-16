@@ -1,0 +1,9 @@
+BEGIN { FS="|"; trouvee=0; chaine="0|0|0|0"}
+{
+if( nom == $1 )
+    {
+        trouvee = 1;
+        chaine = $0;
+    }
+}
+END {print trouvee "|" chaine}

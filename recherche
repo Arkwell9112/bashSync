@@ -1,0 +1,8 @@
+BEGIN { FS="|"; chaine="0|0|0|0"}
+{
+if( nom == $1 )
+    {
+        chaine = $0;
+    }
+}
+END {print chaine}
