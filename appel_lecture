@@ -1,0 +1,16 @@
+#!/bin/bash
+#Fonction qui lit le journal et cherche le fichier spécifié
+#argument : nom_Fichier taille permissions date
+#sortie : 0 si le fichier n'est pas dans le journal, 1 si i est trouvé
+result=$(awk -f lecture nom=$1 journal) #recherche dans le journal
+echo $result
+#séparation du retour dans un tableau
+IFS='|'
+read -a tab <<< "$result"
+echo "${tab[0]}  ${tab[1]} ${tab[2]} ${tab[3]} ${tab[4]}"
+#si non trouvé, écriture à la fin du journal
+if [ ${tab[0]} -eq 0 ]
+then
+  ./ecriture $1 $2 $3 $4
+fi
+echo ${tab[0]}
