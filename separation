@@ -1,2 +1,0 @@
-IFS='|'
-read -a tab <<< "$result"

@@ -13,7 +13,7 @@ fichier="${tab[1]}|${tab[2]}|${tab[3]}|${tab[4]}" #composition du nom de l'ancie
 
 if [[ ${tab[0]} -eq 1 ]]
 then
-  sed -i "s/$fichier/$nouveau/g" journal #remplacement par recherche
+  sed -i "s,$fichier,$nouveau,g" journal #remplacement par recherche
 else
   echo "$nouveau" >> journal #écriture en fin
 fi
