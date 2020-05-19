@@ -11,7 +11,7 @@ IFS=' '
 nouveau="$1|$2|$3|$4" #définition des nouveaux arguements à insérer.
 fichier="${tab[1]}|${tab[2]}|${tab[3]}|${tab[4]}" #composition du nom de l'ancien fichier
 
-if [ ${tab[0]} -eq 1 ]
+if [[ ${tab[0]} -eq 1 ]]
 then
   sed -i "s/$fichier/$nouveau/g" journal #remplacement par recherche
 else
