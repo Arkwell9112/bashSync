@@ -1,5 +1,0 @@
-#!/bin/bash
-#argument : nom_fichier new_taille new_mode new_date
-fichier=$(awk -f recherche nom=$1 journal) #recherche dans le journal
-replace="$1|$2|$3|$4" #définition du nouveau nom dans le journal
-sed -i "s/$fichier/$replace/g" journal #remplacement par recherche
