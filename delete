@@ -1,0 +1,11 @@
+#!/bin/bash
+
+fichier=$(./appel_lecture $1) #recherche dans le journal
+
+IFS='|'
+read -a tab <<< "$fichier" #permet la recuperation de l'indice de mofification présent en début de chaine de caractere
+
+fichier="${tab[1]}|${tab[2]}|${tab[3]}|${tab[4]}" #composition du nom de l'ancien fichier
+
+sed -i "s,$fichier,,g" journal #remplacement par recherche
+sed -i '/^$/d' journal
