@@ -64,7 +64,6 @@ function sous_validite ()
     acces2=$2
     acces1+=$test_rep
     acces2+=$test_rep
-    echo $acces1 > /dev/stderr
     if [ -e $acces1 ] || [ -e $acces2 ]
     then
       test=1
@@ -94,24 +93,32 @@ function branche()
 echo "Saisir le premier répertoire à synchroniser"
 read  rep1
 
-chemin1=$(validite $rep1)
+chemin1=$(validite $rep1) #vérifie que le répertoire 1 existe
 
 echo "Saisir le second répertoire à synchroniser"
 read  rep2
 
-chemin2=$(validite $rep2)
+chemin2=$(validite $rep2) #vérifie que le répertoire 2 existe
 
 chemin1=$(echo $chemin1 | sed "s,/$,,")
 chemin2=$(echo $chemin2 | sed "s,/$,,")
 
 
-sous_repertoire=$(branche $chemin1 $chemin2)
-sous_repertoire=$(echo $sous_repertoire | sed "s,/$,,")
+sous_repertoire=$(branche $chemin1 $chemin2) #vérifie que le sous_dossier existe
+sous_repertoire=$(echo $sous_repertoire | sed "s,/$,,") #mise en forme
 sous_repertoire=$(echo $sous_repertoire | sed "s,$,/,")
 
 
-echo "Argument pour synchronisation"
-echo $chemin1
-echo $chemin2
+echo "Voulez vous synchroniser (1) ou supprimer des repertoires (2) ?"
+read choix
+if [[ choix -eq 1 ]]
+then
+  ./synchronizer.sh $chemin1 $chemin2 $sous_repertoire
+elif [[ choix -eq 2 ]]
+then
+  ./deleter $chemin1 $chemin2 $sous_repertoire
+else
+  echo "choix incorrect"
+fi
 
-echo $sous_repertoire
+echo "Arrêt du programme"
