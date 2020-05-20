@@ -1,0 +1,117 @@
+#!/bin/bash
+function repertoire () #en cas de plusieurs occurence d'un nom de répertoire, demande de choisir un nm précis
+{
+  local sortie=0
+  local nom_rep=$1
+  while [[ sortie -eq 0 ]]
+  do
+    if [ -d $nom_rep ]
+    then
+      echo "Chemin d'accès correct." > /dev/stderr
+      sortie=1
+    else
+      echo "Chemin d'accès incorrect." > /dev/stderr
+      echo "Saisir un chemin d'accès valide :" > /dev/stderr
+      read nom_rep
+    fi
+  done
+  echo $nom_rep
+}
+
+function validite () #vérifie le répertoire, existence, unicité
+{
+  local rep=$1
+  local valide=0
+  local occurence=0
+  local chemin_rep=""
+  while [[ $valide -eq 0 ]]
+  do
+    occurence=$(find /home -type d -name "$rep" | wc -l)
+    if [[ $occurence -eq 0 ]]
+    then
+      echo "Le repèrtoire spécifié n'existe pas." > /dev/stderr
+      echo "Veuillez ressaisir un nom existant" > /dev/stderr
+      read rep
+    elif [[ $occurence -eq 1 ]]
+    then
+       valide=1
+       chemin_rep=$(find /home -type d -name "$rep")
+    else
+      echo "Plusieurs repertoires rencontrés : " > /dev/stderr
+      find /home -type d -name "$rep" > /dev/stderr
+      echo "Veuillez spécifier le chemin d'accès direct au répertoire car il n'est pas unique." > /dev/stderr
+      read chemin_rep
+      chemin_rep=$(repertoire $chemin_rep)
+      valide=1
+    fi
+  done
+  echo $chemin_rep
+}
+
+function sous_validite ()
+{
+  local acces1=$1
+  local acces2=$2
+  local test=0
+  local test_rep
+  while [[ test -eq 0 ]]
+  do
+    echo "Veuillez indiquer le sous-répertoire à sycnhroniser" > /dev/stderr
+    read test_rep
+    test_rep=$(echo $test_rep | sed -e "s,^/,,")
+    test_rep=$(echo $test_rep | sed -e "s,^,/,")
+    acces1=$1
+    acces2=$2
+    acces1+=$test_rep
+    acces2+=$test_rep
+    echo $acces1 > /dev/stderr
+    if [ -e $acces1 ] || [ -e $acces2 ]
+    then
+      test=1
+      echo $test_rep
+    else
+      echo "Sous dossier inexistant " > /dev/stderr
+    fi
+  done
+}
+
+function branche()
+{
+  local reponse="y"
+  local sous_rep
+  echo "Voulez vous synchroniser tout le répertoire (y/n)" > /dev/stderr
+  read reponse
+  if [[ $reponse = "y" ]]
+  then
+    echo "/"
+  else
+    sous_rep=$(sous_validite $1 $2)
+    echo $sous_rep
+  fi
+
+}
+
+echo "Saisir le premier répertoire à synchroniser"
+read  rep1
+
+chemin1=$(validite $rep1)
+
+echo "Saisir le second répertoire à synchroniser"
+read  rep2
+
+chemin2=$(validite $rep2)
+
+chemin1=$(echo $chemin1 | sed "s,/$,,")
+chemin2=$(echo $chemin2 | sed "s,/$,,")
+
+
+sous_repertoire=$(branche $chemin1 $chemin2)
+sous_repertoire=$(echo $sous_repertoire | sed "s,/$,,")
+sous_repertoire=$(echo $sous_repertoire | sed "s,$,/,")
+
+
+echo "Argument pour synchronisation"
+echo $chemin1
+echo $chemin2
+
+echo $sous_repertoire
