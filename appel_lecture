@@ -3,5 +3,8 @@
 #argument : nom_Fichier taille permissions date
 #sortie : 0 si le fichier n'est pas dans le journal, 1 + ses métadonnées si il est trouvé de la forme 1 nom taille permission date_modif
 
-result=$(awk -f lecture nom=$1 journal) #recherche dans le journal
+user=$(whoami)
+journal="/home/$user/.journal"
+
+result=$(awk -f lecture nom=$1 $journal) #recherche dans le journal
 echo ${result}
