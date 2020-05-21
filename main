@@ -89,6 +89,16 @@ function branche()
   fi
 
 }
+#création ou modification des droits du journal
+user=$(whoami)
+journal="/home/$user/.journal"
+
+if [ -f $journal ]
+then
+  chmod +rw $journal
+else
+  touch $journal
+fi
 
 echo "Saisir le premier répertoire à synchroniser"
 read  rep1
