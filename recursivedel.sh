@@ -8,4 +8,4 @@ while read file; do
     elif [[ -d $1$3${file} || $2$3${file} ]]; then #Si le fichier est un dossier alors on lance l'application récursive.
         ./recursivedel.sh $1 $2 "$3$file/"
     fi
-done< <(ls $1$3)
+done< <(ls $1$3 2> /dev/null)
