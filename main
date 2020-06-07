@@ -1,22 +1,4 @@
 #!/bin/bash
-function repertoire () #en cas de plusieurs occurence d'un nom de répertoire, demande de choisir un nm précis
-{
-  local sortie=0
-  local nom_rep=$1
-  while [[ sortie -eq 0 ]]
-  do
-    if [ -d $nom_rep ]
-    then
-      echo "Chemin d'accès correct." > /dev/stderr
-      sortie=1
-    else
-      echo "Chemin d'accès incorrect." > /dev/stderr
-      echo "Saisir un chemin d'accès valide :" > /dev/stderr
-      read nom_rep
-    fi
-  done
-  echo $nom_rep
-}
 
 function validite () #vérifie le répertoire, existence, unicité
 {
@@ -24,6 +6,8 @@ function validite () #vérifie le répertoire, existence, unicité
   local valide=0
   local occurence=0
   local chemin_rep=""
+  local indice
+  local indice_max
   while [[ $valide -eq 0 ]]
   do
     occurence=$(find /home -type d -name "$rep" | wc -l)
@@ -39,9 +23,16 @@ function validite () #vérifie le répertoire, existence, unicité
     else
       echo "Plusieurs repertoires rencontrés : " > /dev/stderr
       find /home -type d -name "$rep" > /dev/stderr
-      echo "Veuillez spécifier le chemin d'accès direct au répertoire car il n'est pas unique." > /dev/stderr
-      read chemin_rep
-      chemin_rep=$(repertoire $chemin_rep)
+      indice_max=$(find /home -type d -name "$rep" | wc -l)
+      echo "Veuillez spécifier le chemin que vous voulez sélectionner : 1,2 ou 3 ....." > /dev/stderr
+      read indice
+      while [[ $indice -lt 1 || $indice -gt $indice_max ]]
+      do
+        echo "Le nombre saisi doit se situer entre 1 et $indice_max." > /dev/stderr
+        echo "Veuillez ressaisir l'indice :" > /dev/stderr
+        read indice
+      done
+      chemin_rep=$(find /home -type d -name "$rep" | head -$indice | tail -1)
       valide=1
     fi
   done
@@ -56,7 +47,7 @@ function sous_validite ()
   local test_rep
   while [[ test -eq 0 ]]
   do
-    echo "Veuillez indiquer le sous-répertoire à sycnhroniser" > /dev/stderr
+    echo "Veuillez indiquer le sous-répertoire" > /dev/stderr
     read test_rep
     test_rep=$(echo $test_rep | sed -e "s,^/,,")
     test_rep=$(echo $test_rep | sed -e "s,^,/,")
@@ -78,7 +69,7 @@ function branche()
 {
   local reponse="y"
   local sous_rep
-  echo "Voulez vous synchroniser tout le répertoire (y/n)" > /dev/stderr
+  echo "Voulez vous synchroniser/supprimer tout le répertoire (y/n)" > /dev/stderr
   read reponse
   if [[ $reponse = "y" ]]
   then
@@ -100,12 +91,12 @@ else
   touch $journal
 fi
 
-echo "Saisir le premier répertoire à synchroniser"
+echo "Saisir le nom du premier répertoire"
 read  rep1
 
 chemin1=$(validite $rep1) #vérifie que le répertoire 1 existe
 
-echo "Saisir le second répertoire à synchroniser"
+echo "Saisir le nom du second répertoire"
 read  rep2
 
 chemin2=$(validite $rep2) #vérifie que le répertoire 2 existe
