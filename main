@@ -71,6 +71,11 @@ function branche()
   local sous_rep
   echo "Voulez vous synchroniser/supprimer tout le répertoire (y/n)" > /dev/stderr
   read reponse
+  while [[ $reponse != 'y' && $reponse != 'n' ]]
+  do
+    echo "Veuillez saisir y pour oui, ou n pour non" > /dev/stderr
+    read reponse
+  done
   if [[ $reponse = "y" ]]
   then
     echo "/"
